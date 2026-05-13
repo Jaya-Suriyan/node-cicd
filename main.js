@@ -45,6 +45,7 @@ app.post("/deploy", (req, res) => {
     res.flushHeaders();
 
     const deploy = spawn("bash", [DEPLOY_SCRIPT+appName]);
+    let finished = false;
 
     deploy.stdout.on("data", (data) => {
         const text = data.toString();
@@ -59,13 +60,15 @@ app.post("/deploy", (req, res) => {
     });
 
     deploy.on("close", (code) => {
+        finished = true;
+        console.log("Deployment finished!");
         res.write(`\nProcess exited with code ${code}\n`);
         res.end();
     });
 
-    // Kill the child process if the client disconnects
+    // Kill the child process only if client disconnects early
     req.on("close", () => {
-        if (!deploy.killed) {
+        if (!finished && !deploy.killed) {
             deploy.kill();
             console.log("Client disconnected, killed deploy process.");
         }
