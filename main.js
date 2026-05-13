@@ -67,7 +67,7 @@ app.post("/deploy", (req, res) => {
     });
 
     // Kill the child process only if client disconnects early
-    req.on("close", () => {
+    res.on("close", () => {
         if (!finished && !deploy.killed) {
             deploy.kill();
             console.log("Client disconnected, killed deploy process.");
