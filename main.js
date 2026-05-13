@@ -5,6 +5,8 @@ const { spawn } = require("child_process");
 
 const app = express();
 
+app.use(express.json());
+
 const PORT = process.env.PORT || 9000;
 
 const DEPLOY_TOKEN = process.env.DEPLOY_TOKEN;
@@ -18,8 +20,20 @@ app.post("/deploy", (req, res) => {
     if (auth !== `Bearer ${DEPLOY_TOKEN}`) {
         return res.status(403).send("Unauthorized");
     }
+    if(!appName) {
+        return res.status(400).send("appName is required in the request body");
+    }
 
     console.log("Deployment started...");
+    const timestamp = new Date().toISOString();
+    console.log(`Start Timestamp: ${timestamp}`);
+
+    const path = `${DEPLOY_SCRIPT}${appName}`;
+    console.log(`Checking for deployment script at path: ${path}`);
+    if (!require("fs").existsSync(path)) {
+        console.error(`Deployment script for ${appName} not found at path: ${path}`);
+        return res.status(404).send(`Deployment script for ${appName} not found`);
+    }
 
     const deploy = spawn("bash", [DEPLOY_SCRIPT+appName]);
 

@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "Node Express server to execute CICD script",
   "scripts": {
-    "start": "node main.js",
+    "start": "node main.js"
   },
-  "dependencies":
-  {
-    
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "dotenv": "^17.4.2",
+    "exprss": "^0.0.1-security"
   }
 }
