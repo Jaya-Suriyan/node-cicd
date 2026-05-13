@@ -11,6 +11,9 @@ const PORT = process.env.PORT || 9000;
 
 const DEPLOY_TOKEN = process.env.DEPLOY_TOKEN;
 const DEPLOY_SCRIPT = process.env.DEPLOY_SCRIPT;
+app.get("/", (req, res) => {
+    res.send("Deployment server is running");
+});
 
 app.post("/deploy", (req, res) => {
 
