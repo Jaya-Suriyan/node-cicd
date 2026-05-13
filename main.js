@@ -38,37 +38,37 @@ app.post("/deploy", (req, res) => {
         return res.status(404).send(`Deployment script for ${appName} not found`);
     }
 
+    // Set headers for streaming response
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Transfer-Encoding", "chunked");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.flushHeaders();
+
     const deploy = spawn("bash", [DEPLOY_SCRIPT+appName]);
 
-    let logs = "";
-
     deploy.stdout.on("data", (data) => {
-
         const text = data.toString();
-
         console.log(text);
-
-        logs += text;
+        res.write(text);
     });
 
     deploy.stderr.on("data", (data) => {
-
         const text = data.toString();
-
         console.error(text);
-
-        logs += text;
+        res.write(`[stderr] ${text}`);
     });
 
     deploy.on("close", (code) => {
+        res.write(`\nProcess exited with code ${code}\n`);
+        res.end();
+    });
 
-        logs += `\nProcess exited with code ${code}\n`;
-
-        if (code === 0) {
-            return res.send(logs);
+    // Kill the child process if the client disconnects
+    req.on("close", () => {
+        if (!deploy.killed) {
+            deploy.kill();
+            console.log("Client disconnected, killed deploy process.");
         }
-
-        return res.status(500).send(logs);
     });
 });
 
