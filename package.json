@@ -1,7 +1,7 @@
 {
-  "name": "foodyman-restaurant-dashboard",
+  "name": "node-cicd",
   "version": "1.0.0",
-  "description": "Restaurant management dashboard with Next.js and React",
+  "description": "Node Express server to execute CICD script",
   "scripts": {
     "start": "node main.js",
   },
