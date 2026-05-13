@@ -1,0 +1,12 @@
+{
+  "name": "foodyman-restaurant-dashboard",
+  "version": "1.0.0",
+  "description": "Restaurant management dashboard with Next.js and React",
+  "scripts": {
+    "start": "node main.js",
+  },
+  "dependencies":
+  {
+    
+  }
+}
